@@ -37,7 +37,6 @@ void DelFirst()
     head = head->next; 
   
     delete(temp); 
-	cout<<1<<endl;
 
 } 
 
@@ -54,8 +53,7 @@ void Del( long long int x,long long int y)
     if ((head->x)==x&&(head->y)==y) 
     { 
         head = temp->next;    
-        free(temp);  
-        cout<<1<<endl;return ;
+        free(temp); 
         return; 
     } 
   
@@ -80,22 +78,23 @@ void Del( long long int x,long long int y)
     free(temp);   
   
     prev->next = next;  
-	cout<<1<<endl;return ;
+	return ;
 } 
 
 void Search(float d) 
 { 
     struct Node* temp = head; 
-	vector<pair<long long int,long long int> >p;
-    while (temp!= NULL) { 
+	long long int p = 0;
+    while (temp!= NULL) 
+    { 
         if((temp->x)*(temp->x)+(temp->y)*(temp->y)<=d*d)
         {
-		
-		p.push_back(make_pair((temp->x),(temp->y)));
-            cout<<"("<<(temp->x)<<","<<(temp->y)<<")";
+		p++;
         }
         temp=temp->next;
     } 
+	if(p==0){cout<<-1;return;}
+	else{cout<<p;return;}
 } 
 
 bool Search(long long int x,long long int y) 
@@ -155,7 +154,9 @@ int main()
         {
             long long int x,y;
             cin>>x>>y;
-            cout<<Search(x,y)<<endl;
+		if(Search(x,y)){cout<<"True";}
+		else{cout<<"False";}
+            cout<<endl;
         }
         else if(a==6)
         {
