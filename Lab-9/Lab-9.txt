@@ -1,117 +1,99 @@
+#pragma GCC optimize("Ofast")
+#pragma GCC target("avx,avx2,fma")
 #include <bits/stdc++.h>
-using namespace std;
+#include <time.h>
+#include <stdlib.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#define pb push_back
+#define IOS ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+#define ll long long
+#define ull unsigned long long
+#define gcd(a,b) __gcd((a),(b))
+#define lcm(a,b) ((a)*(b))/__gcd((a),(b))
+#define clr(x) x.clear()
+#define vi vector<int>
+#define vll vector<long long>
+#define vvi vector<vi>
+#define mp make_pair
+#define hell 1000000007
+#define pii pair<int,int>
+#define pll pair<ll,ll>
+#define vpii vector<pii>
+#define vpll vector<pll>
+#define all(a) a.begin(),a.end()
 
-struct Point
-{
+#define o_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
+#define o_setll tree<ll, null_type,less<ll>, rb_tree_tag,tree_order_statistics_node_update>
+//member functions :
+//1. order_of_key(k) : number of elements strictly lesser than k
+//2. find_by_order(k) : k-th element in the set
+
+using namespace std;
+using namespace __gnu_pbds;
+
+struct pt {
     int x, y;
 };
 
-Point p0;
-
-Point nextToTop(stack<Point> &choco)
-{
-    Point p = choco.top();
-    choco.pop();
-    Point res = choco.top();
-    choco.push(p);
-    return res;
+bool isEqual(pt a,pt b){
+    if(a.x==b.x&&a.y==b.y)
+        return true;
+    return false;
 }
 
-void swap(Point &p1, Point &p2)
-{
-    Point temp = p1;
-    p1 = p2;
-    p2 = temp;
+bool cmp(pt a, pt b) {
+    return a.x < b.x || (a.x == b.x && a.y < b.y);
 }
 
-int distSq(Point p1, Point p2)
-{
-    return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);
+bool cw(pt a, pt b, pt c) {
+    return a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y) < 0;
 }
 
-int orientation(Point p, Point q, Point r)
-{
-    int val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-
-    if (val == 0)
-        return 0;
-    return (val > 0) ? 1 : 2;
+bool ccw(pt a, pt b, pt c) {
+    return a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y) > 0;
 }
 
-int compare(const void *vp1, const void *vp2)
-{
-    Point *p1 = (Point *)vp1;
-    Point *p2 = (Point *)vp2;
-
-    int o = orientation(p0, *p1, *p2);
-    if (o == 0)
-        return (distSq(p0, *p2) >= distSq(p0, *p1)) ? -1 : 1;
-
-    return (o == 1) ? -1 : 1;
-}
-
-void Hull(Point coordinates[], int n)
-{
-    int xmin = coordinates[0].y, min = 0;
-    for (int i = 1; i < n; i++)
-    {
-        int x = coordinates[i].x;
-
-        if (x < xmin || (xmin == x && coordinates[i].y < coordinates[min].y))
-            xmin = coordinates[i].x, min = i;
-    }
-
-    swap(coordinates[0], coordinates[min]);
-
-    p0 = coordinates[0];
-    qsort(&coordinates[1], n - 1, sizeof(Point), compare);
-
-    int m = 1;
-    for (int i = 1; i < n; i++)
-    {
-        while (i < n - 1 && orientation(p0, coordinates[i], coordinates[i + 1]) == 0)
-            i++;
-
-        coordinates[m] = coordinates[i];
-        m++;
-    }
-    if (m < 3)
+void convex_hull(vector<pt>& a) {
+    if (a.size() == 1)
         return;
 
-    stack<Point> choco;
-    choco.push(coordinates[0]);
-    choco.push(coordinates[1]);
-    choco.push(coordinates[2]);
+    sort(a.begin(), a.end(), &cmp);
+    pt p1 = a[0], p2 = a.back();
+    vector<pt> up, down;
+    up.push_back(p1);
+    down.push_back(p1);
+    for (int i = 1; i < (int)a.size(); i++) {
+        if (i == a.size() - 1 || cw(p1, a[i], p2)) {
+            while (up.size() >= 2 && !cw(up[up.size()-2], up[up.size()-1], a[i]))
+                up.pop_back();
+            up.push_back(a[i]);
+        }
+        if (i == a.size() - 1 || ccw(p1, a[i], p2)) {
+            while(down.size() >= 2 && !ccw(down[down.size()-2], down[down.size()-1], a[i]))
+                down.pop_back();
+            down.push_back(a[i]);
+        }
+    }
 
-    for (int i = 3; i < m; i++)
-    {
-        while (orientation(nextToTop(choco), choco.top(), coordinates[i]) != 1)
-            choco.pop();
-        choco.push(coordinates[i]);
-    }
-    Point a[m];
-    int i = 0;
-    while (!choco.empty())
-    {
-        Point p = choco.top();
-        a[i].x = p.x;
-        a[i].y = p.y;
-        choco.pop();
-        i++;
-    }
-    cout << i << endl;
-    for (int j = m - 2; j >= 0; j--)
-        cout << a[j].x << " " << a[j].y << endl;
+    a.clear();
+    for (int i = 0; i <up.size(); i++)
+        a.push_back(up[i]);
+    for (int i = down.size()-2; i >0; i--)
+        a.push_back(down[i]);
 }
 
 int main()
 {
+    IOS
     int n;
-    cin >> n;
-    Point a[n];
-    for (int i = 0; i < n; i++)
-        cin >> a[i].x >> a[i].y;
-
-    Hull(a, n);
+    cin>>n;
+    vector<pt> v(n);
+    for(int i=0;i<n;i++)
+        cin>>v[i].x>>v[i].y;
+    convex_hull(v);
+    cout<<v.size()<<"\n";
+    for(int i=0;i<v.size();i++)
+        cout<<v[i].x<<" "<<v[i].y<<"\n";
     return 0;
 }
