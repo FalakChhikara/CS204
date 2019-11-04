@@ -21,7 +21,7 @@ typedef long double ldb;
 #define ctz(n) __builtin_ctz(n)
 #define maxe *max_element
 #define mine *min_element
-#define anket ios::sync_with_stdio(0), cin.tie(0),cout.tie(0)
+#define falak ios::sync_with_stdio(0), cin.tie(0),cout.tie(0)
 #define endl "\n"
 #define o0(a) cout<<a<<" "
 #define o1(a) cout<<a<<"\n"
@@ -114,7 +114,7 @@ return false;
 // cout<<"1 push 2 pop 3 front 4 back 5 size 6 empty\n";
 // }
 int main(){
-anket;
+falak;
 start();
 lli t;
 cin>>t;
