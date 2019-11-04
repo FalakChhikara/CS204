@@ -100,5 +100,11 @@ int main()
     {
         cout<<mst[i].x<<" "<<mst[i].y<<" "<<mst[i].w<<endl;
     }
+    ll cost = 0;
+    for(ll i=0;i<mst.size();i++)
+    {
+        cost+=mst[i].w;
+    }
+    cout<<"cost- "<<cost<<endl;
     return 0;
 }
