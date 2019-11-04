@@ -15,7 +15,7 @@ void bfs(vector<ll>* adjlist, ll n)
         if(!visited[j])
         {
             queue<ll> q;
-            // starting vertex 0
+            // starting vertex j
             q.push(j);
             visited[j] = 1;
             while(!q.empty())
